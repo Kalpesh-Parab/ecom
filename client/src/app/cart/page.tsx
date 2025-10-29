@@ -1,24 +1,16 @@
 'use client';
 
+import { Suspense } from 'react';
 import { CartItemsType } from '@/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const steps = [
-  {
-    id: 1,
-    title: 'Shopping Cart',
-  },
-  {
-    id: 2,
-    title: 'Shipping Address',
-  },
-  {
-    id: 3,
-    title: 'Payment Method',
-  },
+  { id: 1, title: 'Shopping Cart' },
+  { id: 2, title: 'Shipping Address' },
+  { id: 3, title: 'Payment Method' },
 ];
 
-//TEMPORARY DATA
+// TEMPORARY DATA
 const cartItems: CartItemsType = [
   {
     id: 1,
@@ -75,23 +67,25 @@ const cartItems: CartItemsType = [
   },
 ];
 
-const CartPage = () => {
+function CartPageContent() {
   const searchParams = useSearchParams();
-  const router = useRouter;
+  const router = useRouter();
 
   const activeStep = parseInt(searchParams.get('step') || '1');
+
   return (
     <div className='flex flex-col gap-8 items-center justify-center mt-12'>
       {/* TITLE */}
       <h1 className='text-2xl font-medium'>Your Shopping Cart</h1>
-      {/* Steps */}
+
+      {/* STEPS */}
       <div className='flex flex-col lg:flex-row items-center gap-8 lg:gap-16'>
         {steps.map((step) => (
           <div
+            key={step.id}
             className={`flex items-center gap-2 border-b-2 pb-4 ${
               step.id === activeStep ? 'border-gray-800' : 'border-gray-200'
             }`}
-            key={step.id}
           >
             <div
               className={`w-6 h-6 rounded-full text-white flex items-center justify-center ${
@@ -110,9 +104,16 @@ const CartPage = () => {
           </div>
         ))}
       </div>
-      {/* dksnd */}
     </div>
   );
-};
+}
 
-export default CartPage;
+export default function CartPage() {
+  return (
+    <Suspense
+      fallback={<div className='text-center mt-8'>Loading cart...</div>}
+    >
+      <CartPageContent />
+    </Suspense>
+  );
+}
